@@ -52,7 +52,7 @@ int main() {
                     }
                 }
             }
-            cout << std::endl;
+            cout << endl;
         }
     }
 

@@ -1,49 +1,41 @@
 #include <iostream>
 #include <mpi.h>
-#include <vector>
 using namespace std;
 
 int main(int argc, char **argv)
 {
     MPI_Init(&argc, &argv);
+
     int world_size, world_rank;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
-    int dims[2] = {0, 0};
-    MPI_Dims_create(world_size, 2, dims);
+    // Define a 2D Cartesian topology
+    int dims[2] = {2, 2};    // 2x2 grid (for simplicity)
+    int periods[2] = {0, 0}; // No periodic boundaries
+    int reorder = 1;         // Allow MPI to reorder ranks for efficiency
 
     MPI_Comm cart_comm;
-    int period[2] = {0, 0}; // Periodicity in both dimensions
-    MPI_Cart_create(MPI_COMM_WORLD, 2, dims, period, true, &cart_comm);
+    MPI_Cart_create(MPI_COMM_WORLD, 2, dims, periods, reorder, &cart_comm);
 
-    int coords[2];
-    MPI_Comm_rank(cart_comm, &world_rank);
-    MPI_Cart_coords(cart_comm, world_rank, 2, coords);
+    if (cart_comm != MPI_COMM_NULL)
+    {
+        int coords[2];
+        MPI_Cart_coords(cart_comm, world_rank, 2, coords);
+        cout << "Process " << world_rank << " has coordinates (" << coords[0] << ", " << coords[1] << ")\n";
 
-    int north, south, east, west;
-    MPI_Cart_shift(cart_comm, 0, 1, &north, &south);
-    MPI_Cart_shift(cart_comm, 1, 1, &west, &east);
+        // Find neighbors in each direction
+        int left, right, up, down;
+        MPI_Cart_shift(cart_comm, 0, 1, &up, &down);    // Shift in row direction
+        MPI_Cart_shift(cart_comm, 1, 1, &left, &right); // Shift in column direction
 
-    int value = world_rank;
-    cout << "Process " << world_rank << " at (" << coords[0] << ", " << coords[1] << ") has value : " << value << endl;
+        cout << "Process " << world_rank
+             << " neighbors: left=" << left
+             << ", right=" << right
+             << ", up=" << up
+             << ", down=" << down << "\n";
+    }
 
-    if (north != MPI_PROC_NULL)
-    {
-        MPI_Send(&value, 1, MPI_INT, north, 0, cart_comm);
-    }
-    if (south != MPI_PROC_NULL)
-    {
-        MPI_Recv(&value, 1, MPI_INT, south, 0, cart_comm, MPI_STATUS_IGNORE);
-    }
-    if (west != MPI_PROC_NULL)
-    {
-        MPI_Send(&value, 1, MPI_INT, west, 0, cart_comm);
-    }
-    if (east != MPI_PROC_NULL)
-    {
-        MPI_Recv(&value, 1, MPI_INT, east, 0, cart_comm, MPI_STATUS_IGNORE);
-    }
     MPI_Finalize();
     return 0;
 }

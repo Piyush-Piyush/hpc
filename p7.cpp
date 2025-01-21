@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     
     if (world_rank == 0)
     {
-        double average = static_cast<double>(total_sum) / (n * world_size);
+        double average = (double)(total_sum) / (n * world_size);
         cout << "Total sum: " << total_sum << endl;
         cout << "Average: " << average << endl;
     }

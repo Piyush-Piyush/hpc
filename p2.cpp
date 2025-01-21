@@ -69,6 +69,7 @@ int main()
     cout << "Serial Time: " << (end_serial - start_serial) << " seconds\n";
 
     cout << "\nParallel Prices:\n";
+
     for (int i = 0; i < sections.size(); ++i)
     {
         cout << sections[i] << ": " << parallel_prices[i] << "\n";

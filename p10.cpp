@@ -44,7 +44,7 @@ int main()
 
     // Initialize matrices A, B, and C
     vector<vector<int>> A(N, vector<int>(N, 1)); // Matrix A with all elements = 1
-    vector<vector<int>> B(N, vector<int>(N, 1)); // Matrix B with all elements = 1
+    vector<vector<int>> B(N, vector<int>(N, 2)); // Matrix B with all elements = 1
     vector<vector<int>> C(N, vector<int>(N, 0)); // Matrix C to store result
 
     // Sequential multiplication

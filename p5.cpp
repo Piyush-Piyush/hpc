@@ -11,7 +11,7 @@ int main()
 
     vector<double> CGPA(num_students);
     cout << "Enter the CGPAs of the students:\n";
-    for (double cgpa : CGPA)
+    for (double &cgpa : CGPA)
     {
         cin >> cgpa;
     }
@@ -30,7 +30,7 @@ int main()
 
     // Parallel execution
     double start_parallel = omp_get_wtime();
-    #pragma omp parallel for reduction(max : max_cgpa_parallel)
+#pragma omp parallel for reduction(max : max_cgpa_parallel)
     for (int i = 0; i < num_students; i++)
     {
         if (CGPA[i] > max_cgpa_parallel)
